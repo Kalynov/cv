@@ -1,6 +1,7 @@
 {
   "name": "cv",
   "version": "0.0.0",
+  "homepage": "https://github.com/Kalynov/cv",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
