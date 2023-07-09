@@ -24,7 +24,7 @@ export class CubeComponent implements OnInit, AfterViewInit {
 
   @Input() public rotationSpeedY: number = 0.01;
 
-  @Input() public size: number = 200;
+  @Input() public size: number = 25;
 
   @Input() public texture: string = "/assets/texture.jpg";
 
@@ -43,7 +43,7 @@ export class CubeComponent implements OnInit, AfterViewInit {
 
   private camera!: THREE.PerspectiveCamera;
   textGeo: any;
-  height = 100;
+  height = 5;
   curveSegments = 4;
   bevelThickness = 2;
   bevelSize= 1.5;
@@ -59,10 +59,10 @@ export class CubeComponent implements OnInit, AfterViewInit {
     return this.canvasRef?.nativeElement;
   }
   private loader = new THREE.TextureLoader();
-  private geometry = new THREE.BoxGeometry(2, 2, 2);
+  //private geometry = new THREE.BoxGeometry(2, 2, 2);
   private material = new THREE.MeshBasicMaterial({ map: this.loader.load(this.texture) });
 
-  private cube: THREE.Mesh = new THREE.Mesh(this.geometry, this.material);
+  //private cube: THREE.Mesh = new THREE.Mesh(this.geometry, this.material);
 
   private renderer!: THREE.WebGLRenderer;
 
@@ -72,16 +72,6 @@ export class CubeComponent implements OnInit, AfterViewInit {
   private fontName = 'optimer' ;
   private fontWeight =  'bold';
 
-  /**
-   *Animate the cube
-   *
-   * @private
-   * @memberof CubeComponent
-   */
-  private animateCube() {
-    this.cube.rotation.x += this.rotationSpeedX;
-    this.cube.rotation.y += this.rotationSpeedY;
-  }
 
   /**
    * Create the scene
@@ -93,26 +83,25 @@ export class CubeComponent implements OnInit, AfterViewInit {
     //* Scene
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x000000)
-    this.scene.fog = new THREE.Fog( 0x000000, 250, 1400 );
 
     //*Camera
     this.camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 1, 1500 );
-    this.camera.position.set( 0, 400, 700 );
-		this.cameraTarget = new THREE.Vector3( 0, 150, 0 );
+    this.camera.position.set( 0, 400, 1000 );
+		this.cameraTarget = new THREE.Vector3( 0, 150, 150 );
 
-    const dirLight = new THREE.DirectionalLight( 0xffffff, 0.125 );
-				dirLight.position.set( 0, 0, 1 ).normalize();
-				this.scene.add( dirLight );
+    const dirLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+    dirLight.position.set( 0, 0, 1 ).normalize();
+    this.scene.add( dirLight );
 
-				const pointLight = new THREE.PointLight( 0xffffff, 1.5 );
-				pointLight.color.setHSL( Math.random(), 1, 0.5 );
-				pointLight.position.set( 0, 100, 90 );
-				this.scene.add( pointLight );
+    const pointLight = new THREE.PointLight( 0xffffff, 1.5 );
+    pointLight.color.setHSL( Math.random(), 1, 0.5 );
+    pointLight.position.set( 0, 100, 90 );
+    this.scene.add( pointLight );
 
-				this.materials = [
-					new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } ), // front
-					new THREE.MeshPhongMaterial( { color: 0xffffff } ) // side
-				];
+    this.materials = [
+      new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } ), // front
+      new THREE.MeshPhongMaterial( { color: 0xffffff } ) // side
+    ];
 
     this.group = new THREE.Group();
     this.group.position.y = 100;
@@ -120,15 +109,6 @@ export class CubeComponent implements OnInit, AfterViewInit {
     this.scene.add( this.group );
 
     this.loadFont();
-
-    const plane = new THREE.Mesh(
-      new THREE.PlaneGeometry( 10000, 10000 ),
-      new THREE.MeshBasicMaterial( { color: 0xffffff, opacity: 0.5, transparent: true } )
-    );
-    plane.position.y = 100;
-    plane.rotation.x = - Math.PI / 2;
-    this.scene.add( plane );
-
 
     this.renderer = new THREE.WebGLRenderer( { antialias: true, canvas: this.canvas } );
     this.renderer.setPixelRatio( window.devicePixelRatio );
@@ -143,31 +123,6 @@ export class CubeComponent implements OnInit, AfterViewInit {
       component.renderer.render(component.scene, component.camera);
     }());
 
-  }
-
-  private getAspectRatio() {
-    return this.canvas.clientWidth / this.canvas.clientHeight;
-  }
-
-  /**
- * Start the rendering loop
- *
- * @private
- * @memberof CubeComponent
- */
-  private startRenderingLoop() {
-    //* Renderer
-    // Use canvas element in template
-    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
-    this.renderer.setPixelRatio(devicePixelRatio);
-    this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
-
-    let component: CubeComponent = this;
-    (function render() {
-      requestAnimationFrame(render);
-      component.animateCube();
-      component.renderer.render(component.scene, component.camera);
-    }());
   }
 
   createText() {
